@@ -13,11 +13,21 @@ of a prompt state.
 ```bash
 npm install && npm run build
 npm link            # puts `jev` on PATH
-export TYPESAFE_API_KEY=sk-...
+jev auth login      # hidden prompt; saves to the OS credential store
+jev auth status
 ```
 
-During development, skip the build: `node src/index.ts run ...` (Node 20+
-strips the types).
+The key is stored in macOS Keychain, Windows Credential Manager, or the Linux
+credential store—not in this repository or a plaintext `jev` config file. For
+CI or a temporary shell, set `TYPESAFE_API_KEY` instead; it takes precedence
+over the saved credential. Non-interactive onboarding can read from stdin:
+
+```bash
+printf '%s' "$TYPESAFE_API_KEY" | jev auth login --with-token
+```
+
+`jev auth logout` removes the saved key. During development, skip the build:
+`node src/index.ts run ...` (Node 20+ strips the types).
 
 ## One decision
 
@@ -125,7 +135,7 @@ allows it and so does the CLI.
 
 | Variable | Default |
 |---|---|
-| `TYPESAFE_API_KEY` | *required* |
+| `TYPESAFE_API_KEY` | Session/CI override; otherwise `jev auth login` supplies the saved key |
 | `TYPESAFE_BASE_URL` | `https://api.typesafe.ai` |
 | `JEV_MODEL` | `jev-latest` |
 | `JEV_TIMEOUT_MS` | `60000` |
