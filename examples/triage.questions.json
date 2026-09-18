@@ -1,0 +1,29 @@
+{
+  "urgency": {
+    "type": "noul",
+    "instructions": "Does this message convey urgency?",
+    "criteria": {
+      "true": "The sender is blocked, losing money, or names a deadline",
+      "false": "A question or request with no time pressure"
+    }
+  },
+  "department": {
+    "type": "choice",
+    "instructions": "Which team should handle this?",
+    "criteria": {
+      "billing": "Payment, invoice, or subscription issues",
+      "technical": "Bugs, outages, or integration problems",
+      "sales": "Pricing, plans, or new account questions"
+    }
+  },
+  "severity": {
+    "type": "score",
+    "instructions": "How severe is the customer impact?",
+    "criteria": [
+      "Cosmetic or informational",
+      "Degraded but usable with a workaround",
+      "A core workflow is broken",
+      "Complete outage or money is being lost"
+    ]
+  }
+}

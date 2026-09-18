@@ -1,0 +1,4 @@
+{"id": "t-001", "state": "Payouts have been failing for 3 days and we are losing sales."}
+{"id": "t-002", "state": "How do I change the billing email on my account?"}
+{"id": "t-003", "state": "The dashboard renders the wrong logo colour on Safari."}
+{"id": "t-004", "state": {"subject": "API 500s", "body": "Every POST /orders returns 500 since 14:00 UTC."}}
