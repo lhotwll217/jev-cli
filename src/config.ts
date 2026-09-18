@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { storedApiKey } from "./credentials.ts";
 
 export const EXIT = {
   OK: 0,
@@ -52,10 +53,10 @@ export function schemaDir(): string {
 }
 
 export function loadConfig(overrides: Partial<Config> = {}): Config {
-  const apiKey = overrides.apiKey ?? process.env.TYPESAFE_API_KEY ?? "";
+  const apiKey = overrides.apiKey ?? process.env.TYPESAFE_API_KEY ?? storedApiKey() ?? "";
   if (!apiKey) {
     throw new CliError(
-      "No API key. Set TYPESAFE_API_KEY in the environment (or pass --api-key).",
+      "No API key. Run `jev auth login` for local use or set TYPESAFE_API_KEY for this session or CI.",
       EXIT.AUTH,
     );
   }

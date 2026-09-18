@@ -19,6 +19,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@napi-rs/keyring": "^2.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

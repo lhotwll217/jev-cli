@@ -77,6 +77,7 @@ function jev(args: string[], opts: { stdin?: string; env?: Record<string, string
         TYPESAFE_API_KEY: "test-key",
         TYPESAFE_BASE_URL: baseUrl,
         JEV_HOME: jevHome,
+        JEV_CREDENTIAL_SERVICE: `ai.typesafe.jev-cli.test.${process.pid}`,
         ...opts.env,
       },
       stdio: ["pipe", "pipe", "pipe"],
