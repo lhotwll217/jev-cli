@@ -5,6 +5,7 @@ import { USAGE } from "./usage.ts";
 import { runCommand } from "./commands/run.ts";
 import { batchCommand } from "./commands/batch.ts";
 import { schemasCommand } from "./commands/schemas.ts";
+import { authCommand } from "./commands/auth.ts";
 
 const VERSION = "0.1.0";
 
@@ -28,6 +29,8 @@ async function main(argv: string[]): Promise<number> {
       return batchCommand(args);
     case "schemas":
       return schemasCommand(args);
+    case "auth":
+      return authCommand(args);
     default:
       throw new CliError(`Unknown command: ${command}\n\n${USAGE}`);
   }

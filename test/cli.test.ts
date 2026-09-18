@@ -254,6 +254,33 @@ test("batch: a failing row is recorded inline and exits 5", async () => {
   assert.equal(JSON.parse(res.stderr.trim().split("\n").at(-1)!).failed, 1);
 });
 
+test("auth: login from stdin, status, and logout use secure storage without echoing the key", async () => {
+  const env = { TYPESAFE_API_KEY: "" };
+  const login = await jev(["auth", "login", "--with-token"], { stdin: "saved-test-key\n", env });
+  assert.equal(login.code, 0, login.stderr);
+  assert.doesNotMatch(login.stdout + login.stderr, /saved-test-key/);
+  assert.match(login.stdout, /credential store/);
+
+  const status = await jev(["auth", "status"], { env });
+  assert.equal(status.code, 0, status.stderr);
+  assert.match(status.stdout, /operating system credential store/);
+
+  const logout = await jev(["auth", "logout"], { env });
+  assert.equal(logout.code, 0, logout.stderr);
+  assert.match(logout.stdout, /removed/);
+
+  const after = await jev(["auth", "status"], { env });
+  assert.equal(after.code, 3);
+  assert.match(after.stdout, /Not authenticated/);
+});
+
+test("auth: environment takes precedence and status never displays the key", async () => {
+  const status = await jev(["auth", "status"], { env: { TYPESAFE_API_KEY: "environment-secret" } });
+  assert.equal(status.code, 0, status.stderr);
+  assert.match(status.stdout, /environment/);
+  assert.doesNotMatch(status.stdout + status.stderr, /environment-secret/);
+});
+
 test("missing api key is a clear auth-coded failure", async () => {
   const res = await jev(["run", "--state", "x", "--questions", JSON.stringify(QUESTIONS)], {
     env: { TYPESAFE_API_KEY: "" },

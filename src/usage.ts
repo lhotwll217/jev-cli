@@ -4,6 +4,7 @@ USAGE
   jev run [options]                 One state + questions -> one answer set
   jev batch [options]               JSONL of states against one schema
   jev schemas <list|show|add|rm|path> [name] [source]
+  jev auth <login|status|logout>      Manage the saved API key.
   jev --version | --help
 
 RUN
@@ -21,14 +22,20 @@ BATCH
   --fail-fast                       Stop on the first row error.
   --no-summary                      Suppress the stderr summary line.
 
+AUTH
+  jev auth login                    Prompt without echo; save in the OS credential store.
+  jev auth login --with-token       Read the key from stdin for non-interactive setup.
+  jev auth status                   Report the active credential source; never show the key.
+  jev auth logout                   Remove the key from the OS credential store.
+
 GLOBAL
-  --api-key <key>                   Overrides TYPESAFE_API_KEY.
+  --api-key <key>                   Compatibility override; prefer auth login or the environment.
   --base-url <url>                  Overrides TYPESAFE_BASE_URL.
   --compact                         Single-line JSON output.
   --no-warn                         Silence advisory warnings (stderr).
 
 ENVIRONMENT
-  TYPESAFE_API_KEY                  Required.
+  TYPESAFE_API_KEY                  Session/CI override; saved credentials are the local fallback.
   TYPESAFE_BASE_URL                 Default https://api.typesafe.ai
   JEV_MODEL                         Default jev-latest
   JEV_TIMEOUT_MS                    Default 60000
