@@ -1,0 +1,28 @@
+{
+  "name": "jev-cli",
+  "version": "0.1.0",
+  "description": "JSON-in, JSON-out CLI for the TypeSafe System One API (Jev).",
+  "type": "module",
+  "bin": {
+    "jev": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node src/index.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "typescript": "^5.7.2"
+  }
+}
