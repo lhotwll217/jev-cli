@@ -2,7 +2,7 @@ import { CliError } from "./config.ts";
 
 const KNOWN_FLAGS = new Set([
   "help", "version", "compact", "bare", "dry-run", "json",
-  "fail-fast", "no-summary",
+  "fail-fast", "no-summary", "no-warn",
 ]);
 
 /** Minimal argv parser: `--key value`, `--key=value`, and boolean `--flag`. */

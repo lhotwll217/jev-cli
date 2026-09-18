@@ -79,3 +79,27 @@ export type Request = z.infer<typeof Request>;
 export type Response = z.infer<typeof Response>;
 export type Usage = z.infer<typeof Usage>;
 export type Questions = z.infer<typeof Questions>;
+
+/**
+ * Advisory checks that are not API rules. A two-option choice is a noul with
+ * extra steps: same information, but you pay for a probability map to carry it.
+ */
+export function lintQuestions(questions: unknown): string[] {
+  const warnings: string[] = [];
+  if (!questions || typeof questions !== "object") return warnings;
+  for (const [id, q] of Object.entries(questions as Record<string, unknown>)) {
+    if (!q || typeof q !== "object") continue;
+    const question = q as { type?: unknown; criteria?: unknown };
+    if (question.type !== "choice" || !question.criteria || typeof question.criteria !== "object") continue;
+    const options = Object.keys(question.criteria as Record<string, unknown>);
+    if (options.length === 2) {
+      warnings.push(
+        `${id}: a 2-option choice (${options.join(", ")}) is a noul with extra steps -- consider type "noul".`,
+      );
+    }
+    if (options.length === 1) {
+      warnings.push(`${id}: a 1-option choice has nothing to decide.`);
+    }
+  }
+  return warnings;
+}

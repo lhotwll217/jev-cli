@@ -2,7 +2,7 @@ import { call } from "../client.ts";
 import { CliError, EXIT, costUsd, loadConfig } from "../config.ts";
 import { parseJson, readJsonFile, readStdin } from "../io.ts";
 import { loadSchema } from "../library.ts";
-import { validateRequest } from "./run.ts";
+import { validateRequest, warn } from "./run.ts";
 import type { Args } from "../args.ts";
 import { readFile } from "node:fs/promises";
 
@@ -51,6 +51,8 @@ export async function batchCommand(args: Args): Promise<number> {
     : questionsOpt!.trim().startsWith("{")
       ? parseJson(questionsOpt!, "--questions")
       : await readJsonFile(questionsOpt!);
+
+  warn(questions, args);
 
   const inputPath = args.string("input");
   const text = inputPath ? await readFile(inputPath, "utf8") : await readStdin();

@@ -25,6 +25,7 @@ GLOBAL
   --api-key <key>                   Overrides TYPESAFE_API_KEY.
   --base-url <url>                  Overrides TYPESAFE_BASE_URL.
   --compact                         Single-line JSON output.
+  --no-warn                         Silence advisory warnings (stderr).
 
 ENVIRONMENT
   TYPESAFE_API_KEY                  Required.

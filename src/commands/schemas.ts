@@ -2,6 +2,7 @@ import { CliError } from "../config.ts";
 import { schemaDir } from "../config.ts";
 import { emit, parseJson, readJsonFile, readStdin } from "../io.ts";
 import { listSchemas, loadSchema, removeSchema, saveSchema } from "../library.ts";
+import { warn } from "./run.ts";
 import type { Args } from "../args.ts";
 
 export async function schemasCommand(args: Args): Promise<number> {
@@ -28,7 +29,9 @@ export async function schemasCommand(args: Args): Promise<number> {
           ? parseJson(source, "questions")
           : await readJsonFile(source)
         : parseJson(await readStdin(), "stdin");
-      const path = await saveSchema(name, unwrap(questions));
+      const map = unwrap(questions);
+      warn(map, args);
+      const path = await saveSchema(name, map);
       process.stderr.write(`Saved ${name} -> ${path}\n`);
       return 0;
     }

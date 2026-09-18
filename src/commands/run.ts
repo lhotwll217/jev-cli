@@ -2,7 +2,7 @@ import { call } from "../client.ts";
 import { CliError, EXIT, costUsd, loadConfig, type Config } from "../config.ts";
 import { coerceState, emit, parseJson, readJsonFile, readStdin } from "../io.ts";
 import { formatIssues, loadSchema } from "../library.ts";
-import { Request, Questions } from "../schema.ts";
+import { Request, Questions, lintQuestions } from "../schema.ts";
 import type { Args } from "../args.ts";
 
 /**
@@ -60,6 +60,12 @@ export function validateRequest(state: unknown, questions: unknown, model: strin
   return parsed.data;
 }
 
+/** Advisory warnings go to stderr so stdout stays clean JSON. */
+export function warn(questions: unknown, args: Args): void {
+  if (args.flag("no-warn")) return;
+  for (const line of lintQuestions(questions)) process.stderr.write(`warning: ${line}\n`);
+}
+
 export async function runCommand(args: Args): Promise<number> {
   const cfg: Config = loadConfig({
     apiKey: args.string("api-key"),
@@ -67,6 +73,7 @@ export async function runCommand(args: Args): Promise<number> {
     baseUrl: args.string("base-url"),
   });
   const { state, questions } = await resolveInput(args);
+  warn(questions, args);
 
   if (args.flag("dry-run")) {
     emit(validateRequest(state, questions, cfg.model), !args.flag("compact"));
