@@ -27,7 +27,9 @@ printf '%s' "$TYPESAFE_API_KEY" | jev auth login --with-token
 ```
 
 `jev auth logout` removes the saved key. During development, skip the build:
-`node src/index.ts run ...` (Node 20+ strips the types).
+`node src/index.ts run ...` — Node strips the types itself on 23.6+, or on
+22.6+ with `--experimental-strip-types`. The published package ships compiled
+JS and runs on Node 20+.
 
 ## One decision
 
@@ -117,9 +119,11 @@ always reported and never guessed.
 
 ## Question types
 
-| Type | Required | Answer |
+Every type requires `instructions`. Beyond that:
+
+| Type | Also required | Answer |
 |---|---|---|
-| `noul` | `instructions`; optional `criteria.{true,false}` | `{ noul: 0–1 }` |
+| `noul` | — (optional `criteria.{true,false}`) | `{ noul: 0–1 }` |
 | `choice` | `criteria`: option → description | `{ choice, probabilities, confidence }` |
 | `score` | `criteria`: ordered levels (≥2) | `{ score, legend, probabilities, confidence }` |
 
@@ -139,9 +143,10 @@ allows it and so does the CLI.
 | `TYPESAFE_BASE_URL` | `https://api.typesafe.ai` |
 | `JEV_MODEL` | `jev-latest` |
 | `JEV_TIMEOUT_MS` | `60000` |
-| `JEV_MAX_RETRIES` | `3` — 429/529/5xx, exponential backoff with jitter, honours `Retry-After` |
+| `JEV_MAX_RETRIES` | `3` — 408/429/500/502/503/504/529, exponential backoff with jitter, honours `Retry-After` |
 | `JEV_PRICE_INPUT_PER_MTOK` / `JEV_PRICE_OUTPUT_PER_MTOK` | unset → no cost reporting |
 | `JEV_HOME` | `$XDG_CONFIG_HOME/jev` or `~/.config/jev` |
+| `JEV_CREDENTIAL_SERVICE` | `ai.typesafe.jev-cli` — the credential-store service name; change it to keep separate keys side by side |
 
 ## Exit codes
 
@@ -151,11 +156,21 @@ allows it and so does the CLI.
 ## Tests
 
 ```bash
-npm test        # 15 tests against an in-process mock server
+npm test        # runs against an in-process mock server
 npm run typecheck
 ```
 
 The suite covers retry-then-succeed on 529, non-retry on 422, schema rejection,
-batch ordering under concurrency, and partial-failure exit codes. It has **not**
-yet been run against the live API — the request and response shapes come from
-the published API reference.
+batch ordering under concurrency, partial-failure exit codes, and the
+login/status/logout round-trip. It has **not** yet been run against the live
+API — the request and response shapes come from the published API reference.
+
+The auth tests use the real OS credential store, isolated to a per-run service
+name via `JEV_CREDENTIAL_SERVICE`; set that variable yourself to keep a sandbox
+or CI key separate from your everyday one.
+
+## Background
+
+The design thinking behind the model itself — why cheap typed decisions change
+what an agent's context can be — lives in *Why yet another agent* (internal
+Google Doc; ask Luke for access).
