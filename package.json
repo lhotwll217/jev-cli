@@ -12,6 +12,13 @@
   "engines": {
     "node": ">=20"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=23.6.0",
+      "onFail": "warn"
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node src/index.ts",
